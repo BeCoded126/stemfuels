@@ -1,0 +1,1333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="robots" content="noindex, nofollow">
+<title>Stem Finder — Port Coverage Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+(function(){
+  try {
+    var t = window.localStorage.getItem('sf_theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch(e){}
+}());
+</script>
+<style>
+:root{
+  /* Palette taken from stemfuels.com — navy #0F2D51, petrol #073242, gold #FCCD14 */
+  --ground:#06293A;
+  --surface:#0A3C50;
+  --surface-2:#0E4760;
+  --raised:#115068;
+  --line:#1D6885;
+  --line-hair:#185C77;
+  --text:#EAF2F7;
+  --text-2:#B4CCD9;
+  --muted:#92B0BE;
+  --gold:#FCCD14;
+  --brass:#FCCD14;
+  --brass-ink:#06222E;
+  --brass-dim:#9A7C14;
+  --good:#5FBCA1;
+  --chip:#104558;
+  --chip-on:#17607C;
+  --focus:#FCCD14;
+  --row-hover:#0D4458;
+  --mast:#0F2D51;
+  --mast-deep:#0A2440;
+  --mast-text:#FFFFFF;
+  --mast-muted:#9FB6CE;
+  --mast-line:rgba(255,255,255,.16);
+  --shadow:0 8px 24px rgba(0,0,0,.4);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --ground:#EAEFF3;
+    --surface:#FFFFFF;
+    --surface-2:#F3F7F9;
+    --raised:#FFFFFF;
+    --line:#C5D4DC;
+    --line-hair:#DCE5EA;
+    --text:#0C2A38;
+    --text-2:#38525F;
+    --muted:#607C8A;
+    --gold:#FCCD14;
+    --brass:#7A5E00;
+    --brass-ink:#06222E;
+    --brass-dim:#D6BC72;
+    --good:#2F7A62;
+    --chip:#E8EEF2;
+    --chip-on:#D3E2EA;
+    --focus:#7A5E00;
+    --row-hover:#F2F7FA;
+    --shadow:0 8px 24px rgba(10,36,64,.12);
+  }
+}
+:root[data-theme="light"]{
+    --ground:#EAEFF3;
+    --surface:#FFFFFF;
+    --surface-2:#F3F7F9;
+    --raised:#FFFFFF;
+    --line:#C5D4DC;
+    --line-hair:#DCE5EA;
+    --text:#0C2A38;
+    --text-2:#38525F;
+    --muted:#607C8A;
+    --gold:#FCCD14;
+    --brass:#7A5E00;
+    --brass-ink:#06222E;
+    --brass-dim:#D6BC72;
+    --good:#2F7A62;
+    --chip:#E8EEF2;
+    --chip-on:#D3E2EA;
+    --focus:#7A5E00;
+    --row-hover:#F2F7FA;
+    --shadow:0 8px 24px rgba(10,36,64,.12);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--ground);
+  color:var(--text);
+  font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:14px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
+.wrap{max-width:1360px;margin:0 auto;padding-inline:18px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+
+/* ---------- disclaimer strip ---------- */
+.strip{
+  background:var(--mast-deep);
+  border-top:3px solid var(--gold);
+  border-bottom:1px solid rgba(255,255,255,.09);
+  color:var(--mast-muted);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.strip .wrap{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding-block:7px}
+.strip b{color:#D2DEEC;font-weight:500}
+.strip .sep{color:var(--gold)}
+
+/* ---------- masthead ---------- */
+header.mast{background:var(--mast);border-bottom:3px solid var(--gold);color:var(--mast-text)}
+.mast .wrap{
+  display:flex;gap:22px;align-items:flex-end;justify-content:space-between;
+  flex-wrap:wrap;padding-block:18px 16px;
+}
+.brand{display:flex;flex-direction:column;gap:5px;min-width:0}
+.wordmark{
+  display:flex;align-items:center;gap:11px;
+  font-weight:700;font-size:25px;letter-spacing:.02em;text-transform:uppercase;line-height:1;
+}
+.wordmark .bar{width:4px;height:25px;background:var(--gold);flex:none}
+.wordmark .thin{font-weight:400;color:#B7C9DE}
+.tagline{color:var(--mast-muted);font-size:13px;max-width:60ch}
+.counters{display:flex;gap:0;flex-wrap:wrap;align-items:stretch}
+.counter{padding:0 16px;border-left:1px solid var(--mast-line);text-align:right}
+.counter:first-child{border-left:0}
+.counter .n{font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;display:block;line-height:1.2}
+.counter .l{font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--mast-muted);font-family:'IBM Plex Mono',monospace}
+
+/* ---------- control deck ---------- */
+.deck{
+  position:sticky;top:0;z-index:20;
+  background:var(--surface-2);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(0,0,0,.12);
+}
+.deck .wrap{padding-block:12px 11px;display:flex;flex-direction:column;gap:10px}
+.searchrow{display:flex;gap:10px;align-items:center}
+.searchbox{
+  flex:1;display:flex;align-items:center;gap:9px;
+  background:var(--ground);border:1px solid var(--line);border-radius:3px;
+  padding:0 11px;min-width:0;
+}
+.searchbox:focus-within{border-color:var(--brass);box-shadow:0 0 0 1px var(--brass)}
+.searchbox svg{flex:none;color:var(--muted)}
+#q{
+  flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--text);
+  font-family:'IBM Plex Mono',monospace;font-size:15px;padding:11px 0;letter-spacing:.01em;
+}
+#q::placeholder{color:var(--muted);opacity:.85}
+.xbtn{
+  background:transparent;border:0;color:var(--muted);cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:14px;padding:4px 6px;line-height:1;
+}
+.xbtn:hover{color:var(--text)}
+
+/* filter groups */
+.filters{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.fgroup{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.flabel{
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);padding-right:1px;
+}
+.chip{
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.02em;
+  background:var(--chip);color:var(--text-2);
+  border:1px solid var(--line);border-radius:2px;
+  padding:4px 9px;cursor:pointer;white-space:nowrap;
+  transition:background .1s ease,color .1s ease,border-color .1s ease;
+}
+.chip:hover{border-color:var(--brass-dim);color:var(--text)}
+.chip[aria-pressed="true"]{
+  background:var(--gold);border-color:var(--gold);color:var(--brass-ink);font-weight:600;
+}
+.statusrow{
+  display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  border-top:1px solid var(--line-hair);padding-top:9px;
+}
+.count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-2);font-variant-numeric:tabular-nums}
+.count b{color:var(--text);font-weight:600}
+.rightctl{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.linkbtn{
+  background:transparent;border:0;color:var(--muted);cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 2px;
+}
+.linkbtn:hover{color:var(--brass)}
+.toggle{
+  display:flex;align-items:center;gap:9px;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-2);background:transparent;border:1px solid var(--line);border-radius:2px;padding:5px 10px;
+}
+.toggle:hover{border-color:var(--brass-dim);color:var(--text)}
+.toggle .track{width:28px;height:14px;border-radius:8px;background:var(--line);position:relative;flex:none;transition:background .12s}
+.toggle .knob{position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:var(--muted);transition:left .12s,background .12s}
+.toggle[aria-pressed="true"]{color:var(--brass);border-color:var(--brass)}
+.toggle[aria-pressed="true"] .track{background:var(--brass-dim)}
+.toggle[aria-pressed="true"] .knob{left:16px;background:var(--gold)}
+
+/* ---------- layout ---------- */
+main .wrap{display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:22px;padding-block:20px 40px;align-items:start}
+@media (max-width:1020px){ main .wrap{grid-template-columns:minmax(0,1fr)} }
+
+/* ---------- results table ---------- */
+.tbl{border:1px solid var(--line);border-radius:3px;background:var(--surface);overflow:hidden}
+.tbl table{width:100%;display:block;border-collapse:collapse}
+.tbl thead,.tbl tbody{display:block}
+.tbl th,.tbl td{text-align:left;font-weight:inherit;padding:0;border:0;vertical-align:baseline}
+.thead{
+  display:grid;gap:12px;padding:8px 14px;
+  grid-template-columns:1.25fr .8fr 1.05fr .55fr 1.3fr .62fr 1.45fr;
+  background:var(--surface-2);border-bottom:1px solid var(--line);
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);
+}
+.row{
+  display:grid;gap:12px;padding:11px 14px;
+  grid-template-columns:1.25fr .8fr 1.05fr .55fr 1.3fr .62fr 1.45fr;
+  border-bottom:1px solid var(--line-hair);align-items:baseline;
+}
+.row:last-child{border-bottom:0}
+.row:hover{background:var(--row-hover)}
+.row.stocked{box-shadow:inset 3px 0 0 var(--gold)}
+.cell{min-width:0}
+.port{font-weight:600;font-size:14.5px;letter-spacing:.005em}
+.port .scopetag{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--line);border-radius:2px;padding:1px 4px;margin-left:6px;
+  vertical-align:middle;font-weight:400;white-space:nowrap;
+}
+.sub{color:var(--muted);font-size:11.5px;margin-top:2px}
+.country{font-size:13px;color:var(--text-2)}
+.region{
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);margin-top:2px;
+}
+.grades{display:flex;gap:4px;flex-wrap:wrap}
+.g{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:500;letter-spacing:.04em;
+  border:1px solid var(--brass-dim);color:var(--brass);border-radius:2px;padding:1px 5px;white-space:nowrap;
+}
+.g.wide{border-color:var(--line);color:var(--text-2)}
+.g.none{border-style:dashed;border-color:var(--line);color:var(--muted)}
+.yn{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.yn.on{color:var(--good)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--line);flex:none}
+.yn.on .dot{background:var(--good)}
+.methods{display:flex;gap:4px;flex-wrap:wrap}
+.m{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-2);
+  background:var(--chip);border-radius:2px;padding:1px 5px;white-space:nowrap;
+}
+.m.na{color:var(--muted);background:transparent;border:1px dashed var(--line)}
+.stock{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.stock .site{background:var(--gold);color:var(--brass-ink);border-radius:2px;padding:2px 6px;font-weight:600;white-space:nowrap}
+.stock .incountry{border:1px solid var(--brass-dim);color:var(--brass);border-radius:2px;padding:1px 5px;white-space:nowrap}
+.stock .no{color:var(--muted)}
+.desk a{
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text);
+  text-decoration:none;border-bottom:1px solid var(--brass-dim);overflow-wrap:anywhere;
+}
+.desk a:hover{color:var(--brass);border-bottom-color:var(--brass)}
+.desk .routed{
+  display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);margin-top:3px;
+}
+.colhead{display:none}
+
+@media (max-width:1020px) and (min-width:701px){
+  .thead{display:none}
+  .row{
+    grid-template-columns:1.5fr 1fr 1.3fr;
+    grid-template-areas:"port country desk" "grades lubes methods" "stock stock stock";
+    row-gap:8px;padding:13px 14px;
+  }
+  .row .c-port{grid-area:port}.row .c-country{grid-area:country}.row .c-desk{grid-area:desk}
+  .row .c-grades{grid-area:grades}.row .c-lubes{grid-area:lubes}.row .c-methods{grid-area:methods}
+  .row .c-stock{grid-area:stock}
+}
+@media (max-width:640px){
+  .strip .wrap > span:nth-child(n+4){display:none}
+  .mast .wrap{padding-block:14px 12px;gap:14px}
+  .counters{gap:0}
+  .counter{padding:0 11px}
+  .counter .n{font-size:16px}
+  .filters{flex-wrap:nowrap;overflow-x:auto;gap:14px;padding-bottom:2px;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .fgroup{flex-wrap:nowrap}
+  .flabel{white-space:nowrap}
+}
+@media (max-width:700px){
+  .thead{display:none}
+  .row{grid-template-columns:1fr;row-gap:7px;padding:14px}
+  .colhead{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:3px;
+  }
+  .row .c-port .colhead{display:none}
+}
+
+/* ---------- notices / empty ---------- */
+.notice{
+  display:flex;gap:9px;align-items:flex-start;
+  border:1px solid var(--brass-dim);border-left:3px solid var(--gold);
+  background:var(--surface);border-radius:2px;padding:9px 12px;margin-bottom:12px;
+  font-size:12.5px;color:var(--text-2);
+}
+.notice .tag{
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--brass);flex:none;padding-top:1px;
+}
+.empty{border:1px solid var(--line);border-radius:3px;background:var(--surface);padding:28px 22px;text-align:left}
+.empty h3{margin:0 0 6px;font-size:17px;font-weight:600}
+.empty p{margin:0 0 16px;color:var(--muted);font-size:13px;max-width:56ch}
+.routecards{display:flex;gap:10px;flex-wrap:wrap}
+.routecard{
+  border:1px solid var(--line);border-radius:2px;padding:11px 13px;background:var(--surface-2);min-width:210px;
+}
+.routecard .rl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.routecard a{
+  display:block;margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:13px;
+  color:var(--brass);text-decoration:none;border-bottom:1px solid var(--brass-dim);
+}
+.routecard .rn{font-size:11.5px;color:var(--muted);margin-top:6px}
+
+/* ---------- warehouse view ---------- */
+.whgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.wh{border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:3px;background:var(--surface);padding:14px}
+.wh h4{margin:0;font-size:16px;font-weight:600;letter-spacing:.01em}
+.wh .whc{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--brass);margin-top:3px}
+.wh .whn{font-size:12.5px;color:var(--text-2);margin-top:9px}
+.wh .whports{margin-top:10px;padding-top:9px;border-top:1px solid var(--line-hair)}
+.wh .whports .lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.wh .whports .list{font-size:12.5px;color:var(--text-2);margin-top:4px}
+.wh .whdesk{margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+.wh .whdesk a{color:var(--text);text-decoration:none;border-bottom:1px solid var(--brass-dim)}
+.wh .whdesk a:hover{color:var(--brass)}
+
+/* ---------- rail ---------- */
+.rail{display:flex;flex-direction:column;gap:14px}
+.panel{border:1px solid var(--line);border-radius:3px;background:var(--surface);overflow:hidden}
+.panel h3{
+  margin:0;padding:9px 13px;background:var(--surface-2);border-bottom:1px solid var(--line);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-2);font-weight:500;
+}
+.panel .body{padding:11px 13px}
+.desks{display:flex;flex-direction:column}
+.deskrow{position:relative;display:flex;justify-content:space-between;gap:10px;padding:7px 13px;border-bottom:1px solid var(--line-hair);align-items:baseline}
+.deskrow:last-child{border-bottom:0}
+.deskrow a{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text);text-decoration:none;border-bottom:1px solid var(--brass-dim)}
+.deskrow a:hover{color:var(--brass)}
+.deskrow span{font-size:11px;color:var(--muted);text-align:right;flex:none;max-width:52%}
+.taglist{display:flex;gap:4px;flex-wrap:wrap}
+.taglist .t{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-2);
+  background:var(--chip);border-radius:2px;padding:2px 6px;
+}
+.subhead{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin:11px 0 5px;
+}
+.subhead:first-child{margin-top:0}
+.prov{font-size:11.5px;color:var(--muted);line-height:1.5}
+.prov p{margin:0 0 7px}
+.prov p:last-child{margin-bottom:0}
+.prov b{color:var(--text-2);font-weight:500}
+
+footer{border-top:1px solid var(--line);background:var(--surface);margin-top:8px}
+footer .wrap{
+  padding-block:16px 26px;display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.04em;color:var(--muted);
+}
+/* ---------- hint line ---------- */
+.hint{
+  display:flex;gap:8px;align-items:baseline;margin-bottom:11px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.02em;color:var(--muted);
+}
+.hint b{color:var(--text-2);font-weight:500}
+
+/* ---------- copy-address button ---------- */
+.copy{
+  background:transparent;border:1px solid transparent;border-radius:2px;color:var(--muted);
+  cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;
+  text-transform:uppercase;padding:1px 4px;margin-left:7px;opacity:0;transition:opacity .1s ease;
+}
+.row:hover .copy,.copy:focus-visible,.copy.done{opacity:1}
+.copy:hover{color:var(--brass);border-color:var(--brass-dim)}
+.copy.done{color:var(--good)}
+.deskrow .copy{position:absolute;right:9px;top:6px;margin:0;background:var(--surface)}
+.deskrow:hover .copy,.deskrow .copy:focus-visible{opacity:1}
+@media (pointer:coarse){.copy{opacity:1}}
+
+/* ---------- first-run walkthrough ---------- */
+.tour-target{outline:2px solid var(--gold);outline-offset:4px;border-radius:3px}
+.tour-card{
+  position:fixed;z-index:80;width:320px;max-width:calc(100vw - 24px);
+  background:var(--surface);border:1px solid var(--brass-dim);border-radius:4px;
+  box-shadow:var(--shadow);padding:13px 14px;
+}
+.tour-card .step{
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--brass);
+}
+.tour-card h4{margin:6px 0 5px;font-size:15.5px;font-weight:600;letter-spacing:.005em}
+.tour-card p{margin:0;font-size:12.5px;line-height:1.5;color:var(--text-2)}
+.tour-card .acts{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:13px}
+.tour-card .next{
+  background:var(--gold);color:var(--brass-ink);border:0;border-radius:2px;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;padding:6px 14px;
+}
+.tour-card .skip{
+  background:transparent;border:0;color:var(--muted);cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.07em;
+  text-transform:uppercase;padding:4px 2px;
+}
+.tour-card .skip:hover{color:var(--text)}
+@media (max-width:640px){
+  .tour-card{left:12px;right:12px;width:auto;top:auto!important;
+    bottom:calc(12px + env(safe-area-inset-bottom, 0px));}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="strip">
+  <div class="wrap">
+    <span><b>Stem Finder</b> — independent demo</span>
+    <span class="sep">/</span>
+    <span>Built from public data at stemfuels.com. Not affiliated with Stem Fuels.</span>
+    <span class="sep">/</span>
+    <span>No pricing, stock levels or customer data</span>
+  </div>
+</div>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="brand">
+      <div class="wordmark"><span class="bar"></span><span>Stem</span><span class="thin">Finder</span></div>
+      <div class="tagline">Port coverage and capability index — which grades, which delivery method, which warehouse, and the desk that owns it.</div>
+    </div>
+    <div class="counters">
+      <div class="counter"><span class="n">64</span><span class="l">Locations</span></div>
+      <div class="counter"><span class="n">23</span><span class="l">Countries</span></div>
+      <div class="counter"><span class="n">6</span><span class="l">Warehouses</span></div>
+      <div class="counter"><span class="n">11</span><span class="l">Desks</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="deck">
+  <div class="wrap">
+    <div class="searchrow">
+      <div class="searchbox">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M10.4 10.4 14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <input id="q" type="search" autocomplete="off" spellcheck="false"
+               placeholder="Port, country or region — try Cartagena, Kingston, Caribbean">
+        <button class="xbtn" id="clearq" type="button" hidden aria-label="Clear search">CLEAR</button>
+      </div>
+    </div>
+
+    <div class="filters" id="filters">
+      <div class="fgroup"><span class="flabel">Grade</span>
+        <button class="chip" type="button" data-f="grade" data-v="MGO" aria-pressed="false">MGO</button>
+        <button class="chip" type="button" data-f="grade" data-v="IFO" aria-pressed="false">IFO</button>
+        <button class="chip" type="button" data-f="grade" data-v="ALL" aria-pressed="false">All grades</button>
+      </div>
+      <div class="fgroup"><span class="flabel">Lubricants</span>
+        <button class="chip" type="button" data-f="lubes" data-v="yes" aria-pressed="false">Available</button>
+      </div>
+      <div class="fgroup"><span class="flabel">Delivery</span>
+        <button class="chip" type="button" data-f="method" data-v="truck" aria-pressed="false">Truck</button>
+        <button class="chip" type="button" data-f="method" data-v="barge" aria-pressed="false">Barge</button>
+        <button class="chip" type="button" data-f="method" data-v="expipe" aria-pressed="false">Ex-pipe</button>
+        <button class="chip" type="button" data-f="method" data-v="gas" aria-pressed="false">Gas station</button>
+      </div>
+      <div class="fgroup"><span class="flabel">Stock</span>
+        <button class="chip" type="button" data-f="stock" data-v="site" aria-pressed="false">Warehouse on site</button>
+      </div>
+    </div>
+
+    <div class="statusrow">
+      <div class="count" id="count">64 of 64 locations</div>
+      <div class="rightctl">
+        <button class="linkbtn" id="theme" type="button">Light mode</button>
+        <button class="linkbtn" id="howto" type="button">How it works</button>
+        <button class="linkbtn" id="reset" type="button" hidden>Reset all</button>
+        <button class="toggle" id="whtoggle" type="button" aria-pressed="false">
+          <span class="track"><span class="knob"></span></span>
+          <span>Warehouse network</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+    <div>
+      <div id="notices"></div>
+      <div id="results"></div>
+    </div>
+
+    <aside class="rail">
+      <section class="panel">
+        <h3>Desk directory</h3>
+        <div class="desks" id="deskdir"></div>
+      </section>
+
+      <section class="panel">
+        <h3>Lubricants programme</h3>
+        <div class="body">
+          <div class="subhead">Brands carried</div>
+          <div class="taglist" id="lubbrands"></div>
+          <div class="subhead">OEM approvals</div>
+          <div class="taglist" id="lubOEM"></div>
+          <div class="subhead">Product types</div>
+          <div class="taglist" id="lubTypes"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Reading this index</h3>
+        <div class="body prov">
+          <p><b>Source.</b> Country coverage pages at stemfuels.com, transcribed by hand. Nothing here comes from an internal system — no pricing, no stock levels, no customer records.</p>
+          <p><b>Grade filters</b> match only where the site names a grade. Rows marked <i>grade not specified</i> stay out of grade-filtered results.</p>
+          <p><b>Desk column.</b> Where the site names no country desk, the row routes to the trading desk and is marked <i>routed</i>.</p>
+          <p><b>Warehouse</b> marks a named stocking site. <i>In-country</i> marks territories where stock is held but the site is not named publicly.</p>
+        </div>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Stem Finder — spec-work demo by Brandon-Ray Brown</span>
+    <span>Public data only · this demo counts anonymous visits — link token, no IP, no location, no identity</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================== DESKS ============================== */
+var DESKS = {
+  mexico:   {a:'mexico@stemfuels.com',   n:'Mexico'},
+  panama:   {a:'panama@stemfuels.com',   n:'Central America'},
+  colombia: {a:'colombia@stemfuels.com', n:'Colombia'},
+  caribs:   {a:'caribs@stemfuels.com',   n:'Caribbean'},
+  jamaica:  {a:'jamaica@stemfuels.com',  n:'Jamaica'},
+  spain:    {a:'spain@stemfuels.com',    n:'Spain, Portugal, Med'},
+  guyana:   {a:'guyana@stemfuels.com',   n:'Guyana'},
+  suriname: {a:'suriname@stemfuels.com', n:'Suriname'},
+  florida:  {a:'florida@stemfuels.com',  n:'Florida office'},
+  energy:   {a:'energy@stemfuels.com',   n:'Trading desk'},
+  general:  {a:'stemfuels@stemfuels.com',n:'General enquiries'}
+};
+var DESK_ORDER = ['mexico','panama','colombia','caribs','jamaica','guyana','suriname','spain','florida','energy','general'];
+
+var METHOD_LABEL = {truck:'Truck', barge:'Barge', expipe:'Ex-pipe', gas:'Gas station', dockside:'Dockside'};
+
+/* ============================== COVERAGE DATA ==============================
+   Transcribed from the public country pages at stemfuels.com.
+   grades: MGO | IFO | ALL (all fuel types) | MOST (most grades) | [] (not named)
+========================================================================== */
+var GROUPS = [
+  { country:'Mexico', region:'Mexico', desk:'mexico', grades:['MGO','IFO'], lubes:true,
+    methods:['truck','barge','expipe','gas'],
+    ports:['Manzanillo','Lázaro Cárdenas','Coatzacoalcos','Dos Bocas','Ciudad del Carmen','Progreso',
+           'Veracruz','Tuxpan','Altamira','Tampico','Topolobampo','Mazatlán','Ensenada'] },
+
+  { country:'Panama', region:'Central America', desk:'panama', grades:[], lubes:true, methods:[],
+    ports:['Balboa','Cristóbal'] },
+  { country:'Costa Rica', region:'Central America', desk:'panama', grades:[], lubes:true, methods:[],
+    ports:[{name:'Regional ports', scope:'country', note:'Covered from the Central America desk'}] },
+  { country:'El Salvador', region:'Central America', desk:'panama', grades:[], lubes:true, methods:[],
+    ports:[{name:'Regional ports', scope:'country', note:'Covered from the Central America desk'}] },
+  { country:'Guatemala', region:'Central America', desk:'panama', grades:[], lubes:true, methods:[],
+    ports:[{name:'Regional ports', scope:'country', note:'Covered from the Central America desk'}] },
+  { country:'Honduras', region:'Central America', desk:'panama', routed:true, grades:[], lubes:true,
+    lubeNote:'Eni marine lubricants', methods:['dockside','barge'],
+    ports:[{name:'All ports', scope:'country', note:'Lubricants programme — fuel grades not named'}] },
+
+  { country:'Colombia', region:'South America', desk:'colombia', grades:['MGO','IFO'], lubes:true,
+    methods:['truck','barge'],
+    ports:[{name:'Cartagena', stock:'site', note:'Warehouse — Colombia stock point'},'Barranquilla','Buenaventura'] },
+
+  { country:'Ecuador', region:'South America', desk:'energy', routed:true, grades:['MGO','IFO'], lubes:true,
+    lubeNote:'Via state-owned suppliers', methods:[], ports:['Guayaquil','La Libertad'] },
+
+  { country:'Peru', region:'South America', desk:'energy', routed:true, grades:['MGO','IFO'], lubes:true,
+    methods:['barge','truck'],
+    ports:[{name:'Callao', note:'Primary port'},
+           {name:'Smaller ports', scope:'country', methods:['truck'], note:'Truck delivery'}] },
+
+  { country:'Chile', region:'South America', desk:'energy', routed:true, grades:['IFO','MGO'],
+    extraGrades:['Antarctic gasoil'], lubes:true, methods:[],
+    ports:['Valparaíso','Punta Arenas',{name:'Smaller ports', scope:'country'}] },
+
+  { country:'Argentina', region:'South America', desk:'energy', routed:true, grades:['IFO','MGO'], lubes:true,
+    methods:['truck','barge'], ports:[{name:'Country-wide coverage', scope:'country'}] },
+
+  { country:'Brazil', region:'South America', desk:'energy', routed:true, grades:['MOST'], lubes:true,
+    methods:['truck','barge'], ports:['Santos','Rio de Janeiro','Rio Grande','Vitória'] },
+
+  { country:'Uruguay', region:'South America', desk:'energy', routed:true, grades:['IFO','MGO'], lubes:false,
+    methods:['barge','truck'], ports:[{name:'Country-wide coverage', scope:'country'}] },
+
+  { country:'Guyana', region:'South America', desk:'guyana', grades:['MGO','IFO'], lubes:true,
+    lubeNote:'Sole distributor — North Sea Lubricants, Rexoil', methods:[],
+    ports:[{name:'Georgetown', stock:'site', note:'Warehouse — Guyana stock point'}] },
+
+  { country:'Suriname', region:'South America', desk:'suriname', grades:['IFO','MGO'], lubes:true,
+    lubeNote:'Official distributor — North Sea Lubricants, Rexoil', methods:['truck','barge'],
+    ports:['Paramaribo'] },
+
+  { country:'Jamaica', region:'Caribbean', desk:'jamaica', grades:['MGO','IFO'], lubes:true,
+    methods:['truck','barge'],
+    ports:[{name:'Kingston', stock:'country'},{name:'Kingston anchorage', stock:'country'}] },
+
+  { country:'Dominican Republic', region:'Caribbean', desk:'caribs', grades:['MGO'], lubes:true, methods:[],
+    ports:[{name:'Santo Domingo', stock:'country'},{name:'Rio Haina', stock:'country'},
+           {name:'Caucedo', stock:'country'},{name:'Puerto Plata', stock:'country'}] },
+
+  { country:'Puerto Rico', region:'Caribbean', desk:'caribs', grades:['MGO'], lubes:true, methods:[],
+    ports:[{name:'Territory coverage', scope:'country'}] },
+  { country:'Curaçao', region:'Caribbean', desk:'caribs', grades:['MGO'], lubes:true, methods:[],
+    ports:[{name:'Island coverage', scope:'country'}] },
+  { country:'Trinidad and Tobago', region:'Caribbean', desk:'caribs', grades:['MOST'], lubes:true,
+    lubeNote:'Major lubricant programmes', methods:['truck','barge'],
+    ports:[{name:'Country-wide coverage', scope:'country'}] },
+
+  { country:'Spain', region:'Iberia', desk:'spain', grades:['ALL'], lubes:true, methods:['truck','barge'],
+    ports:['Barcelona','Tarragona','Castellón','Sagunto',
+           {name:'Valencia', stock:'site', note:'Warehouse — head office stock point'},
+           'Alicante','Cartagena','Málaga','Ceuta',
+           {name:'Algeciras', stock:'site', note:'Warehouse — Strait stock point'},
+           'Huelva','Seville','Vigo','Santander'] },
+
+  { country:'Portugal', region:'Iberia', desk:'spain', grades:['MGO','IFO'], lubes:true, methods:[],
+    groupNote:'Managed from the Spain office', ports:['Lisbon','Setúbal'] },
+
+  { country:'Mediterranean', region:'Mediterranean', desk:'spain', routed:true, grades:['MOST'], lubes:false,
+    methods:[], ports:[{name:'Istanbul to Gibraltar / Ceuta', scope:'region', note:'Corridor coverage'}] },
+
+  { country:'United States', region:'North America', desk:'florida', grades:[], lubes:false, methods:[],
+    ports:[{name:'Boca Raton office', scope:'office', note:'1200 N Federal Hwy, Boca Raton FL 33432'}] }
+];
+
+var WAREHOUSES = [
+  {name:'Cartagena', country:'Colombia', desk:'colombia', kind:'Named stocking site',
+   note:'Stock point named on the Colombia coverage page.', ports:['Cartagena','Barranquilla','Buenaventura']},
+  {name:'Jamaica', country:'Jamaica', desk:'jamaica', kind:'In-country stock',
+   note:'Warehouse held on the island; the site itself is not named publicly.', ports:['Kingston','Kingston anchorage']},
+  {name:'Dominican Republic', country:'Dominican Republic', desk:'caribs', kind:'Centralized warehouse',
+   note:'Stock held centrally for the DR ports.', ports:['Santo Domingo','Rio Haina','Caucedo','Puerto Plata']},
+  {name:'Valencia', country:'Spain', desk:'spain', kind:'Named stocking site',
+   note:'Head-office port. Spain runs all fuel types plus lubricants.', ports:['Valencia','Sagunto','Castellón','Barcelona','Tarragona']},
+  {name:'Algeciras', country:'Spain', desk:'spain', kind:'Named stocking site',
+   note:'Strait of Gibraltar position, alongside Ceuta and Málaga.', ports:['Algeciras','Ceuta','Málaga','Cartagena']},
+  {name:'Georgetown', country:'Guyana', desk:'guyana', kind:'Named stocking site',
+   note:'Sole distributor for North Sea Lubricants and Rexoil.', ports:['Georgetown']}
+];
+
+var LUBES = {
+  brands:['Mobil','Total','Castrol','Shell','Eni','Repsol','North Sea Lubricants','Rexoil'],
+  oem:['Wärtsilä','MAN','Volvo','Daihatsu Diesel','Hyundai','Niigata','Yanmar'],
+  types:['Cylinder oils','System oils','Engine oils','Gear oils','Hydraulic','Turbine','Refrigeration','Compressor oils','Greases','Coolants']
+};
+
+/* ============================== BUILD RECORDS ============================== */
+function fold(s){
+  return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+var RECORDS = [];
+GROUPS.forEach(function(g){
+  g.ports.forEach(function(p){
+    var o = (typeof p === 'string') ? {name:p} : p;
+    var rec = {
+      port: o.name,
+      country: g.country,
+      region: g.region,
+      desk: g.desk,
+      routed: !!g.routed,
+      grades: g.grades || [],
+      extraGrades: g.extraGrades || [],
+      lubes: !!g.lubes,
+      lubeNote: g.lubeNote || '',
+      methods: o.methods || g.methods || [],
+      stock: o.stock || null,
+      scope: o.scope || 'port',
+      note: o.note || g.groupNote || ''
+    };
+    rec.hay = fold([rec.port, rec.country, rec.region, DESKS[rec.desk].a, rec.note,
+                    rec.grades.join(' '), rec.extraGrades.join(' '),
+                    rec.methods.map(function(m){return METHOD_LABEL[m];}).join(' ')].join(' '));
+    RECORDS.push(rec);
+  });
+});
+
+/* ============================== STATE ============================== */
+var state = { q:'', grade:[], lubes:[], method:[], stock:[], warehouse:false };
+
+function matchGrade(rec, chip){
+  var g = rec.grades;
+  if (chip === 'MGO') return g.indexOf('MGO') > -1 || g.indexOf('ALL') > -1 || g.indexOf('MOST') > -1;
+  if (chip === 'IFO') return g.indexOf('IFO') > -1 || g.indexOf('ALL') > -1 || g.indexOf('MOST') > -1;
+  if (chip === 'ALL') return g.indexOf('ALL') > -1 || g.indexOf('MOST') > -1;
+  return false;
+}
+
+function filtered(){
+  var q = fold(state.q.trim());
+  var terms = q ? q.split(/\s+/) : [];
+  return RECORDS.filter(function(r){
+    for (var i = 0; i < terms.length; i++) { if (r.hay.indexOf(terms[i]) === -1) return false; }
+    if (state.grade.length && !state.grade.some(function(c){ return matchGrade(r, c); })) return false;
+    if (state.lubes.length && !r.lubes) return false;
+    if (state.method.length && !state.method.some(function(m){ return r.methods.indexOf(m) > -1; })) return false;
+    if (state.stock.length && r.stock !== 'site') return false;
+    return true;
+  });
+}
+
+/* ============================== RENDER ============================== */
+var el = {
+  results: document.getElementById('results'),
+  notices: document.getElementById('notices'),
+  count: document.getElementById('count'),
+  q: document.getElementById('q'),
+  clearq: document.getElementById('clearq'),
+  reset: document.getElementById('reset'),
+  whtoggle: document.getElementById('whtoggle')
+};
+
+function node(tag, cls, text){
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+function gradeCell(r){
+  var box = node('div','grades');
+  if (!r.grades.length && !r.extraGrades.length){
+    box.appendChild(node('span','g none','Grade not specified'));
+    return box;
+  }
+  r.grades.forEach(function(g){
+    if (g === 'ALL') box.appendChild(node('span','g wide','All fuel types'));
+    else if (g === 'MOST') box.appendChild(node('span','g wide','Most grades'));
+    else box.appendChild(node('span','g', g));
+  });
+  r.extraGrades.forEach(function(g){ box.appendChild(node('span','g wide', g)); });
+  return box;
+}
+
+function methodCell(r){
+  var box = node('div','methods');
+  if (!r.methods.length){ box.appendChild(node('span','m na','Not specified')); return box; }
+  r.methods.forEach(function(m){ box.appendChild(node('span','m', METHOD_LABEL[m] || m)); });
+  return box;
+}
+
+function cell(cls, headLabel){
+  var c = node('td','cell ' + cls);
+  c.setAttribute('role','cell');
+  var h = node('div','colhead', headLabel);
+  h.setAttribute('aria-hidden','true');   // the column header already names this cell
+  c.appendChild(h);
+  return c;
+}
+
+function copyButton(text, label){
+  var b = node('button','copy','Copy');
+  b.type = 'button';
+  b.setAttribute('aria-label', 'Copy ' + label);
+  b.addEventListener('click', function(ev){
+    ev.preventDefault();
+    copyText(text).then(function(){
+      b.textContent = 'Copied';
+      b.classList.add('done');
+      window.setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('done'); }, 1600);
+    }, function(){
+      b.textContent = 'Select it';
+      window.setTimeout(function(){ b.textContent = 'Copy'; }, 1600);
+    });
+  });
+  return b;
+}
+
+function copyText(t){
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+  } catch(e){}
+  return new Promise(function(resolve, reject){
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = t;
+      ta.setAttribute('readonly','');
+      ta.style.position = 'fixed';
+      ta.style.top = '-1000px';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      resolve();
+    } catch(e){ reject(e); }
+  });
+}
+
+function rowFor(r){
+  var row = node('tr','row' + (r.stock === 'site' ? ' stocked' : ''));
+  row.setAttribute('role','row');
+
+  var c1 = cell('c-port','Port');
+  var p = node('div','port');
+  p.appendChild(document.createTextNode(r.port));
+  if (r.scope !== 'port'){
+    var tagText = r.scope === 'office' ? 'Office' : (r.scope === 'region' ? 'Corridor' : 'Country-level');
+    p.appendChild(node('span','scopetag', tagText));
+  }
+  c1.appendChild(p);
+  if (r.note) c1.appendChild(node('div','sub', r.note));
+  row.appendChild(c1);
+
+  var c2 = cell('c-country','Country');
+  c2.appendChild(node('div','country', r.country));
+  c2.appendChild(node('div','region', r.region));
+  row.appendChild(c2);
+
+  var c3 = cell('c-grades','Fuel grades');
+  c3.appendChild(gradeCell(r));
+  row.appendChild(c3);
+
+  var c4 = cell('c-lubes','Lubricants');
+  var yn = node('div','yn' + (r.lubes ? ' on' : ''));
+  yn.appendChild(node('span','dot'));
+  yn.appendChild(node('span', null, r.lubes ? 'Yes' : 'Not listed'));
+  c4.appendChild(yn);
+  if (r.lubes && r.lubeNote) c4.appendChild(node('div','sub', r.lubeNote));
+  row.appendChild(c4);
+
+  var c5 = cell('c-methods','Delivery');
+  c5.appendChild(methodCell(r));
+  row.appendChild(c5);
+
+  var c6 = cell('c-stock','Warehouse');
+  var st = node('div','stock');
+  if (r.stock === 'site') st.appendChild(node('span','site','Warehouse'));
+  else if (r.stock === 'country') st.appendChild(node('span','incountry','In-country'));
+  else st.appendChild(node('span','no','—'));
+  c6.appendChild(st);
+  row.appendChild(c6);
+
+  var c7 = cell('c-desk','Desk');
+  var d = node('div','desk');
+  var a = node('a', null, DESKS[r.desk].a);
+  a.href = 'mailto:' + DESKS[r.desk].a + '?subject=' + encodeURIComponent('Enquiry — ' + r.port + ', ' + r.country);
+  d.appendChild(a);
+  d.appendChild(copyButton(DESKS[r.desk].a, DESKS[r.desk].a));
+  if (r.routed) d.appendChild(node('span','routed','Routed — no country desk listed'));
+  c7.appendChild(d);
+  row.appendChild(c7);
+
+  return row;
+}
+
+function headerRow(){
+  var thead = node('thead');
+  thead.setAttribute('role','rowgroup');
+  var tr = node('tr','thead');
+  tr.setAttribute('role','row');
+  ['Port','Country','Fuel grades','Lubricants','Delivery','Warehouse','Desk'].forEach(function(t){
+    var th = node('th', null, t);
+    th.setAttribute('role','columnheader');
+    th.setAttribute('scope','col');
+    tr.appendChild(th);
+  });
+  thead.appendChild(tr);
+  return thead;
+}
+
+/* How many rows a grade filter is hiding purely because no grade is named. */
+function hiddenByGrade(){
+  if (!state.grade.length) return 0;
+  var q = fold(state.q.trim());
+  var terms = q ? q.split(/\s+/) : [];
+  return RECORDS.filter(function(r){
+    if (r.grades.length) return false;
+    for (var i = 0; i < terms.length; i++) { if (r.hay.indexOf(terms[i]) === -1) return false; }
+    if (state.lubes.length && !r.lubes) return false;
+    if (state.method.length && !state.method.some(function(m){ return r.methods.indexOf(m) > -1; })) return false;
+    if (state.stock.length && r.stock !== 'site') return false;
+    return true;
+  }).length;
+}
+
+function renderEmpty(){
+  var e = node('div','empty');
+  e.appendChild(node('h3','No listed location matches that.'));
+  e.appendChild(node('p','Stem Fuels covers ports beyond the ones named on the public site. Anything unlisted routes through the trading desk, which prices and arranges supply case by case.'));
+  var cards = node('div','routecards');
+  [['Trading desk','energy','Unlisted ports, cargo and case-by-case supply'],
+   ['General enquiries','general','Everything else — routed internally']].forEach(function(x){
+    var c = node('div','routecard');
+    c.appendChild(node('div','rl', x[0]));
+    var a = node('a', null, DESKS[x[1]].a);
+    a.href = 'mailto:' + DESKS[x[1]].a + '?subject=' + encodeURIComponent('Port enquiry' + (state.q ? ' — ' + state.q : ''));
+    c.appendChild(a);
+    c.appendChild(node('div','rn', x[2]));
+    cards.appendChild(c);
+  });
+  e.appendChild(cards);
+  return e;
+}
+
+function renderWarehouses(){
+  var q = fold(state.q.trim());
+  var list = WAREHOUSES.filter(function(w){
+    if (!q) return true;
+    return fold(w.name + ' ' + w.country + ' ' + w.kind + ' ' + w.ports.join(' ')).indexOf(q) > -1;
+  });
+  el.count.textContent = list.length + ' of 6 stocking locations';
+  el.results.textContent = '';
+  if (!list.length){ el.results.appendChild(renderEmpty()); return; }
+  var grid = node('div','whgrid');
+  list.forEach(function(w){
+    var c = node('div','wh');
+    c.appendChild(node('h4', null, w.name));
+    c.appendChild(node('div','whc', w.country + ' · ' + w.kind));
+    c.appendChild(node('div','whn', w.note));
+    var pb = node('div','whports');
+    pb.appendChild(node('div','lbl','Ports listed under this desk'));
+    pb.appendChild(node('div','list', w.ports.join(' · ')));
+    c.appendChild(pb);
+    var dk = node('div','whdesk');
+    var a = node('a', null, DESKS[w.desk].a);
+    a.href = 'mailto:' + DESKS[w.desk].a + '?subject=' + encodeURIComponent('Stock enquiry — ' + w.name);
+    dk.appendChild(a);
+    c.appendChild(dk);
+    grid.appendChild(c);
+  });
+  el.results.appendChild(grid);
+}
+
+function renderNotices(list){
+  el.notices.textContent = '';
+  if (state.warehouse) return;
+
+  var hidden = hiddenByGrade();
+  if (hidden){
+    var h = node('div','hint');
+    h.appendChild(node('b', null, hidden + (hidden === 1 ? ' location hidden' : ' locations hidden')));
+    h.appendChild(node('span', null,
+      'stemfuels.com names no fuel grade for them, so a grade filter leaves them out rather than guessing.'));
+    el.notices.appendChild(h);
+  }
+
+  if (state.q.trim().length < 2) return;
+  var named = list.filter(function(r){ return r.scope === 'port'; });
+  var seen = {}, dupes = {};
+  named.forEach(function(r){
+    var k = fold(r.port);
+    if (seen[k]) dupes[k] = true;
+    seen[k] = true;
+  });
+  var names = Object.keys(dupes);
+  if (!names.length) return;
+  var parts = names.slice(0, 3).map(function(k){
+    var matches = named.filter(function(r){ return fold(r.port) === k; });
+    return matches[0].port + ' (' + matches.map(function(r){ return r.country; }).join(', ') + ')';
+  });
+  var n = node('div','notice');
+  n.appendChild(node('span','tag','Same name'));
+  n.appendChild(node('span', null, parts.join('; ') + ' — different ports, different desks. Check the country before you route it.'));
+  el.notices.appendChild(n);
+}
+
+function render(){
+  var anyFilter = state.grade.length || state.lubes.length || state.method.length || state.stock.length;
+  el.reset.hidden = !(anyFilter || state.q || state.warehouse);
+  el.clearq.hidden = !state.q;
+
+  if (state.warehouse){ el.notices.textContent = ''; renderWarehouses(); return; }
+
+  var list = filtered();
+  el.count.textContent = list.length + ' of ' + RECORDS.length + ' locations';
+  renderNotices(list);
+  el.results.textContent = '';
+  if (!list.length){ el.results.appendChild(renderEmpty()); return; }
+  var tbl = node('div','tbl');
+  var table = node('table');
+  table.setAttribute('role','table');
+  table.setAttribute('aria-label','Port coverage');
+  table.appendChild(headerRow());
+  var tbody = node('tbody');
+  tbody.setAttribute('role','rowgroup');
+  list.forEach(function(r){ tbody.appendChild(rowFor(r)); });
+  table.appendChild(tbody);
+  tbl.appendChild(table);
+  el.results.appendChild(tbl);
+}
+
+/* rail */
+(function railInit(){
+  var dd = document.getElementById('deskdir');
+  DESK_ORDER.forEach(function(k){
+    var row = node('div','deskrow');
+    var left = node('div');
+    var a = node('a', null, DESKS[k].a);
+    a.href = 'mailto:' + DESKS[k].a;
+    left.appendChild(a);
+    left.appendChild(copyButton(DESKS[k].a, DESKS[k].a));
+    row.appendChild(left);
+    row.appendChild(node('span', null, DESKS[k].n));
+    dd.appendChild(row);
+  });
+  function tags(id, arr){
+    var box = document.getElementById(id);
+    arr.forEach(function(t){ box.appendChild(node('span','t', t)); });
+  }
+  tags('lubbrands', LUBES.brands);
+  tags('lubOEM', LUBES.oem);
+  tags('lubTypes', LUBES.types);
+})();
+
+/* ============================== TRACKING ============================== */
+var track = (function(){
+  // Tracking API — a Supabase edge function. Token-based attribution only.
+  var ENDPOINT = 'https://lfkfwrxciaupogmkoaae.supabase.co/functions/v1/stem-finder';
+  var raw = new URLSearchParams(window.location.search).get('v') || '';
+  var token = (raw.replace(/[^A-Za-z0-9_.\-]/g,'').slice(0,64)) || 'direct';
+
+  var vid = null, returning = false;
+  try {
+    vid = window.localStorage.getItem('sf_vid');
+    if (vid) { returning = true; }
+    else {
+      vid = (window.crypto && window.crypto.randomUUID)
+        ? window.crypto.randomUUID().replace(/-/g,'')
+        : (Date.now().toString(36) + Math.random().toString(36).slice(2)).slice(0,32);
+      window.localStorage.setItem('sf_vid', vid);
+    }
+  } catch(e){
+    vid = (Date.now().toString(36) + Math.random().toString(36).slice(2, 14));
+  }
+  if (!vid || vid.length < 8) vid = (Date.now().toString(36) + Math.random().toString(36).slice(2, 14));
+
+  var searches = [], filters = [], warehouseOpened = false;
+  var pendingSearches = [], pendingFilters = [];
+  var active = 0, mark = Date.now(), visible = (document.visibilityState !== 'hidden');
+  var dirty = false, lastSent = 0;
+
+  function seconds(){
+    var s = active;
+    if (visible) s += (Date.now() - mark);
+    return Math.round(s / 1000);
+  }
+  function send(kind, beacon){
+    var body = JSON.stringify({
+      kind: kind, visitor: vid, token: token,
+      referrer: (kind === 'visit' ? (document.referrer || '') : ''),
+      screen: (window.screen && window.screen.width) || window.innerWidth || null,
+      returning: returning,
+      seconds: seconds(),
+      searches: pendingSearches.slice(0,20),
+      filters: pendingFilters.slice(0,20),
+      warehouse: warehouseOpened
+    });
+    pendingSearches = []; pendingFilters = []; dirty = false; lastSent = Date.now();
+    try {
+      if (beacon && navigator.sendBeacon){
+        navigator.sendBeacon(ENDPOINT, new Blob([body], {type:'text/plain;charset=UTF-8'}));
+        return;
+      }
+      fetch(ENDPOINT, {method:'POST', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body: body, keepalive: true})
+        .catch(function(){});
+    } catch(e){}
+  }
+  function note(listName, value){
+    var store = listName === 'search' ? searches : filters;
+    var pend  = listName === 'search' ? pendingSearches : pendingFilters;
+    if (store.indexOf(value) > -1) return;
+    store.push(value); pend.push(value); dirty = true;
+    if (store.length > 60) store.shift();
+  }
+
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'hidden'){
+      if (visible){ active += (Date.now() - mark); visible = false; }
+      send('engagement', true);
+    } else if (!visible){ visible = true; mark = Date.now(); }
+  });
+  window.addEventListener('pagehide', function(){ send('engagement', true); });
+  window.setInterval(function(){
+    if (dirty || (Date.now() - lastSent) > 45000) send('engagement', false);
+  }, 20000);
+
+  send('visit', false);
+
+  return {
+    search: function(v){ note('search', v); },
+    filter: function(v){ note('filter', v); },
+    warehouse: function(){ if (!warehouseOpened){ warehouseOpened = true; dirty = true; note('filter','warehouse-network'); } }
+  };
+})();
+
+/* ============================== CONTROLS ============================== */
+function setQuery(v){
+  el.q.value = v;
+  state.q = v;
+  render();
+}
+function setChip(f, v, on){
+  var btn = document.querySelector('.chip[data-f="' + f + '"][data-v="' + v + '"]');
+  var arr = state[f];
+  var i = arr.indexOf(v);
+  if (on && i === -1) arr.push(v);
+  if (!on && i > -1) arr.splice(i, 1);
+  if (btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  render();
+}
+function resetAll(){
+  state = { q:'', grade:[], lubes:[], method:[], stock:[], warehouse:false };
+  el.q.value = '';
+  Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(c){
+    c.setAttribute('aria-pressed','false');
+  });
+  el.whtoggle.setAttribute('aria-pressed','false');
+  render();
+}
+function focusSearch(){
+  try {
+    if (window.matchMedia && window.matchMedia('(pointer: fine)').matches && window.innerWidth >= 700) {
+      el.q.focus();
+    }
+  } catch(e){}
+}
+
+/* ============================== WALKTHROUGH ============================== */
+var tour = (function(){
+  var STEPS = [
+    { find: function(){ return document.querySelector('.searchbox'); },
+      title: 'Start with the port',
+      body: 'Type a port, country or region. Partial words and missing accents both work — "lazaro" finds Lázaro Cárdenas.',
+      enter: function(){ setQuery('cartagena'); } },
+
+    { find: function(){ return document.querySelector('.tbl') || el.results; },
+      title: 'Read across the row',
+      body: 'Two Cartagenas — Colombia and Spain — and they are not the same desk. Each row carries the grades, lubricants, delivery methods, stock and the address that owns it.' },
+
+    { find: function(){ return document.getElementById('filters'); },
+      title: 'Stack the chips',
+      body: 'Grade, lubricants, delivery method, warehouse on site. They combine, so MGO plus Barge leaves only the ports that do both.',
+      enter: function(){ setQuery(''); setChip('grade','MGO',true); setChip('method','barge',true); } },
+
+    { find: function(){ return el.whtoggle; },
+      title: 'The warehouse network',
+      body: 'Flip this for the six stocking locations on their own — what is held where, the ports each desk lists, and who to ask about stock.',
+      enter: function(){ setChip('grade','MGO',false); setChip('method','barge',false); } }
+  ];
+
+  var card = null, target = null, idx = -1, running = false;
+
+  function clearTarget(){
+    if (target){ target.classList.remove('tour-target'); target = null; }
+  }
+  function place(){
+    if (!card || !target) return;
+    if (window.innerWidth <= 640){ card.style.left = ''; card.style.top = ''; return; }
+    var r = target.getBoundingClientRect();
+    var top = r.bottom + 12;
+    if (top + card.offsetHeight > window.innerHeight - 12){
+      top = Math.max(12, r.top - card.offsetHeight - 12);
+    }
+    var left = Math.min(Math.max(12, r.left), window.innerWidth - card.offsetWidth - 12);
+    card.style.top = top + 'px';
+    card.style.left = left + 'px';
+  }
+  function build(){
+    card = node('div','tour-card');
+    card.setAttribute('role','dialog');
+    card.setAttribute('aria-label','How Stem Finder works');
+    card.appendChild(node('div','step'));
+    card.appendChild(node('h4'));
+    card.appendChild(node('p'));
+    var acts = node('div','acts');
+    var skip = node('button','skip','Skip');
+    skip.type = 'button';
+    skip.addEventListener('click', function(){ stop(false); });
+    var next = node('button','next','Next');
+    next.type = 'button';
+    next.addEventListener('click', function(){ go(idx + 1); });
+    acts.appendChild(skip);
+    acts.appendChild(next);
+    card.appendChild(acts);
+    document.body.appendChild(card);
+  }
+  function go(i){
+    if (i >= STEPS.length){ stop(true); return; }
+    var s = STEPS[i];
+    idx = i;
+    if (s.enter) s.enter();
+    clearTarget();
+    target = s.find();
+    card.querySelector('.step').textContent = 'Step ' + (i + 1) + ' of ' + STEPS.length;
+    card.querySelector('h4').textContent = s.title;
+    card.querySelector('p').textContent = s.body;
+    card.querySelector('.next').textContent = (i === STEPS.length - 1) ? 'Done' : 'Next';
+    if (target){
+      target.classList.add('tour-target');
+      var r = target.getBoundingClientRect();
+      if (r.top < 70 || r.bottom > window.innerHeight - 70){
+        target.scrollIntoView({ block:'center', behavior:'auto' });
+      }
+    }
+    place();
+    card.querySelector('.next').focus();
+  }
+  function stop(finished){
+    clearTarget();
+    if (card && card.parentNode) card.parentNode.removeChild(card);
+    card = null;
+    running = false;
+    document.removeEventListener('keydown', onKey, true);
+    window.removeEventListener('resize', place);
+    window.removeEventListener('scroll', place, true);
+    resetAll();
+    window.scrollTo(0, 0);
+    try { window.localStorage.setItem('sf_tour', '1'); } catch(e){}
+    track.filter(finished ? 'tour:completed' : 'tour:skipped-at-' + (idx + 1));
+    focusSearch();
+  }
+  function onKey(ev){
+    if (!running) return;
+    if (ev.key === 'Escape'){ ev.preventDefault(); stop(false); }
+    else if (ev.key === 'ArrowRight'){ ev.preventDefault(); go(idx + 1); }
+  }
+  function start(){
+    if (running) return;
+    running = true;
+    build();
+    document.addEventListener('keydown', onKey, true);
+    window.addEventListener('resize', place);
+    window.addEventListener('scroll', place, true);
+    go(0);
+  }
+  function seen(){
+    try { return window.localStorage.getItem('sf_tour') === '1'; } catch(e){ return false; }
+  }
+  return { start: start, seen: seen };
+})();
+
+/* ============================== EVENTS ============================== */
+var qTimer = null;
+el.q.addEventListener('input', function(){
+  state.q = el.q.value;
+  render();
+  window.clearTimeout(qTimer);
+  qTimer = window.setTimeout(function(){
+    var v = state.q.trim();
+    if (v.length >= 2) track.search(v.slice(0,40));
+  }, 900);
+});
+el.clearq.addEventListener('click', function(){
+  el.q.value = ''; state.q = ''; render(); el.q.focus();
+});
+el.reset.addEventListener('click', function(){ resetAll(); focusSearch(); });
+
+var themeBtn = document.getElementById('theme');
+function currentTheme(){
+  var t = document.documentElement.getAttribute('data-theme');
+  if (t === 'light' || t === 'dark') return t;
+  try { if (window.matchMedia('(prefers-color-scheme: light)').matches) return 'light'; } catch(e){}
+  return 'dark';
+}
+function labelTheme(){
+  themeBtn.textContent = (currentTheme() === 'dark' ? 'Light mode' : 'Dark mode');
+}
+themeBtn.addEventListener('click', function(){
+  var next = currentTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { window.localStorage.setItem('sf_theme', next); } catch(e){}
+  labelTheme();
+});
+labelTheme();
+document.getElementById('howto').addEventListener('click', function(){ tour.start(); });
+document.getElementById('filters').addEventListener('click', function(ev){
+  var btn = ev.target.closest('.chip');
+  if (!btn) return;
+  var f = btn.dataset.f, v = btn.dataset.v;
+  var on = btn.getAttribute('aria-pressed') === 'true';
+  btn.setAttribute('aria-pressed', on ? 'false' : 'true');
+  var arr = state[f];
+  if (on) { arr.splice(arr.indexOf(v), 1); }
+  else { arr.push(v); track.filter(f + ':' + v); }
+  render();
+});
+el.whtoggle.addEventListener('click', function(){
+  state.warehouse = !state.warehouse;
+  el.whtoggle.setAttribute('aria-pressed', state.warehouse ? 'true' : 'false');
+  if (state.warehouse) track.warehouse();
+  render();
+});
+
+render();
+
+if (tour.seen()) focusSearch();
+else window.setTimeout(function(){ tour.start(); }, 450);
+})();
+</script>
+</body>
+</html>

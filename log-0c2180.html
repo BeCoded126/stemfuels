@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Stem Finder — Visit Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Palette taken from stemfuels.com — navy #0F2D51, petrol #073242, gold #FCCD14 */
+  --ground:#06293A; --surface:#0A3C50; --surface-2:#0E4760;
+  --line:#1D6885; --line-hair:#185C77;
+  --text:#EAF2F7; --text-2:#B4CCD9; --muted:#92B0BE;
+  --gold:#FCCD14; --brass:#FCCD14; --brass-ink:#06222E; --brass-dim:#9A7C14;
+  --good:#5FBCA1; --chip:#104558; --row-hover:#0D4458;
+  --mast:#0F2D51; --mast-text:#FFFFFF; --mast-muted:#9FB6CE; --mast-line:rgba(255,255,255,.16);
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --ground:#EAEFF3; --surface:#FFFFFF; --surface-2:#F3F7F9;
+    --line:#C5D4DC; --line-hair:#DCE5EA;
+    --text:#0C2A38; --text-2:#38525F; --muted:#607C8A;
+    --gold:#FCCD14; --brass:#7A5E00; --brass-ink:#06222E; --brass-dim:#D6BC72;
+    --good:#2F7A62; --chip:#E8EEF2; --row-hover:#F2F7FA;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--ground);color:var(--text);
+  font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1500px;margin:0 auto;padding-inline:18px}
+a{color:inherit}
+header{background:var(--mast);border-top:3px solid var(--gold);border-bottom:3px solid var(--gold);color:var(--mast-text)}
+header .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;padding-block:16px 14px}
+.wordmark{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.wordmark .bar{width:4px;height:20px;background:var(--gold)}
+.wordmark .thin{font-weight:400;color:#B7C9DE}
+.sub{color:var(--mast-muted);font-size:12px;margin-top:5px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
+.tiles{display:flex;gap:0;flex-wrap:wrap}
+.tile{padding:0 16px;border-left:1px solid var(--mast-line);text-align:right}
+.tile:first-child{border-left:0}
+.tile .n{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;display:block;line-height:1.2}
+.tile .l{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--mast-muted)}
+main .wrap{padding-block:18px 40px}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:1180px}
+thead th{
+  position:sticky;top:0;background:var(--surface-2);border-bottom:1px solid var(--line);
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;text-align:left;padding:9px 12px;white-space:nowrap;z-index:2;
+}
+tbody td{border-bottom:1px solid var(--line-hair);padding:10px 12px;vertical-align:top}
+tbody tr:hover{background:var(--row-hover)}
+tbody tr:last-child td{border-bottom:0}
+.tok{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--brass);white-space:nowrap}
+.vid{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);display:block;margin-top:3px}
+.num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+.when{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-2);white-space:nowrap}
+.when small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.pill{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid var(--line);border-radius:2px;padding:1px 5px;color:var(--muted);white-space:nowrap;
+}
+.pill.on{border-color:var(--brass-dim);color:var(--brass)}
+.pill.new{border-color:var(--good);color:var(--good)}
+.terms{display:flex;gap:4px;flex-wrap:wrap;max-width:340px}
+.terms .t{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--chip);border-radius:2px;padding:1px 6px;color:var(--text-2)}
+.terms .none{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px}
+.ref{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-2);max-width:200px;word-break:break-all}
+.empty{padding:40px 22px;text-align:left;color:var(--muted)}
+.empty h3{margin:0 0 6px;color:var(--text);font-size:16px;font-weight:600}
+.foot{margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);line-height:1.6}
+.foot b{color:var(--text-2);font-weight:500}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div>
+      <div class="wordmark"><span class="bar"></span><span>Stem</span><span class="thin">Finder</span></div>
+      <div class="sub" id="stamp">Visit log · private</div>
+    </div>
+    <div class="tiles">
+      <div class="tile"><span class="n" id="t-tokens">0</span><span class="l">Tokens</span></div>
+      <div class="tile"><span class="n" id="t-browsers">0</span><span class="l">Browsers</span></div>
+      <div class="tile"><span class="n" id="t-visits">0</span><span class="l">Visits</span></div>
+      <div class="tile"><span class="n" id="t-time">0m</span><span class="l">Total time</span></div>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div id="out"></div>
+    <div class="foot">
+      <b>Attribution is token-only.</b> No IP address, no geolocation, no identity — a row is one browser that opened one shared link.<br>
+      Time on page counts only while the tab was visible. A repeat open of the same link by the same browser increments Visits rather than adding a row.
+    </div>
+  </div>
+</main>
+<script>
+var API = 'https://lfkfwrxciaupogmkoaae.supabase.co/functions/v1/stem-finder';
+var ROWS = [];
+
+function pad(n){ return (n < 10 ? '0' : '') + n; }
+function fmt(iso){
+  if (!iso) return '—';
+  var d = new Date(iso);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getDate() + ', ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+function ago(iso){
+  if (!iso) return '';
+  var s = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000));
+  if (s < 60) return s + 's ago';
+  if (s < 3600) return Math.round(s / 60) + 'm ago';
+  if (s < 86400) return Math.round(s / 3600) + 'h ago';
+  return Math.round(s / 86400) + 'd ago';
+}
+function dur(sec){
+  sec = Math.max(0, sec || 0);
+  if (sec < 60) return sec + 's';
+  var m = Math.floor(sec / 60), s = sec % 60;
+  if (m < 60) return m + 'm ' + pad(s) + 's';
+  return Math.floor(m / 60) + 'h ' + pad(m % 60) + 'm';
+}
+function node(tag, cls, text){
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+function termCell(arr){
+  var td = node('td');
+  var box = node('div','terms');
+  if (!arr || !arr.length){ box.appendChild(node('span','none','—')); }
+  else { arr.forEach(function(t){ box.appendChild(node('span','t', t)); }); }
+  td.appendChild(box);
+  return td;
+}
+function message(head, body){
+  var out = document.getElementById('out');
+  out.textContent = '';
+  var e = node('div','empty');
+  e.appendChild(node('h3', null, head));
+  e.appendChild(node('div', null, body));
+  out.appendChild(e);
+}
+
+function draw(){
+  var out = document.getElementById('out');
+  out.textContent = '';
+
+  var tokens = {}, visits = 0, secs = 0;
+  ROWS.forEach(function(r){
+    tokens[r.token] = true;
+    visits += (r.visit_count || 0);
+    secs += (r.seconds_prior || 0) + (r.seconds_view || 0);
+  });
+  document.getElementById('t-tokens').textContent = Object.keys(tokens).length;
+  document.getElementById('t-browsers').textContent = ROWS.length;
+  document.getElementById('t-visits').textContent = visits;
+  document.getElementById('t-time').textContent = dur(secs);
+
+  if (!ROWS.length){
+    message('No visits recorded yet.',
+      'Share a link with ?v=<name> on the end and the first open appears here. Your own opens count too — the page cannot tell you apart from anyone else, by design.');
+    return;
+  }
+
+  var scroll = node('div','scroll');
+  var table = node('table');
+  var thead = node('thead'), htr = node('tr');
+  ['Token','First seen','Last seen','Visits','Time on page','Browser','Screen','Referrer','Warehouse','Ports searched','Filters used']
+    .forEach(function(h){ htr.appendChild(node('th', null, h)); });
+  thead.appendChild(htr);
+  table.appendChild(thead);
+
+  var tb = node('tbody');
+  ROWS.forEach(function(r){
+    var tr = node('tr');
+
+    var td1 = node('td');
+    td1.appendChild(node('div','tok', r.token));
+    td1.appendChild(node('span','vid', 'browser ' + String(r.visitor_id || '').slice(0, 8)));
+    tr.appendChild(td1);
+
+    tr.appendChild(node('td','when', fmt(r.first_seen)));
+
+    var td3 = node('td','when');
+    td3.appendChild(document.createTextNode(fmt(r.last_seen)));
+    td3.appendChild(node('small', null, ago(r.last_seen)));
+    tr.appendChild(td3);
+
+    tr.appendChild(node('td','num', String(r.visit_count || 0)));
+    tr.appendChild(node('td','num', dur((r.seconds_prior || 0) + (r.seconds_view || 0))));
+
+    var td6 = node('td');
+    td6.appendChild(node('span','pill ' + (r.returning_visitor ? '' : 'new'), r.returning_visitor ? 'Return' : 'First'));
+    tr.appendChild(td6);
+
+    tr.appendChild(node('td','num', r.screen_width ? r.screen_width + 'px' : '—'));
+
+    var td8 = node('td');
+    td8.appendChild(node('div','ref', r.referrer || 'direct'));
+    tr.appendChild(td8);
+
+    var td9 = node('td');
+    td9.appendChild(node('span','pill ' + (r.warehouse_opened ? 'on' : ''), r.warehouse_opened ? 'Opened' : 'No'));
+    tr.appendChild(td9);
+
+    tr.appendChild(termCell(r.searches));
+    tr.appendChild(termCell(r.filters));
+
+    tb.appendChild(tr);
+  });
+  table.appendChild(tb);
+  scroll.appendChild(table);
+  out.appendChild(scroll);
+}
+
+(function boot(){
+  document.getElementById('stamp').textContent =
+    'Visit log · private · loaded ' + fmt(new Date().toISOString());
+
+  var secret = new URLSearchParams(window.location.search).get('admin') || '';
+  if (!secret){
+    message('Key required.', 'Open this page with ?admin= followed by your key.');
+    return;
+  }
+  message('Loading…', 'Reading the visit log.');
+  fetch(API + '?admin=' + encodeURIComponent(secret), { cache: 'no-store' })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(j){
+      if (!Array.isArray(j)){ message('That key was not accepted.', 'Check the key and try again.'); return; }
+      ROWS = j;
+      draw();
+    })
+    .catch(function(){
+      message('Could not reach the tracking service.', 'The Supabase function did not answer. Check your connection and reload.');
+    });
+})();
+</script>
+</body>
+</html>
